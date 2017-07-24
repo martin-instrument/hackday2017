@@ -23,6 +23,7 @@ var startOverlay;
 var countdown = 4;
 var startText;
 var started = false;
+var startTime;
 var assets = [
   {id: "player", url: "images/player.png", image: {}, d: {w: 920, h: 137, fw: 115}, frames: 8},
   {id: "track", url: "images/track.png", image: {}, d: {w: 960, h: 640}, frames: 1},
@@ -105,6 +106,7 @@ function countDown() {
   if (countdown === 0) {
     startOverlay.style.display = "none";
     started = true;
+    startTime = Number(new Date());
   } else {
     startText.innerHTML = countdown;
     setTimeout(countDown, 1000);
@@ -139,7 +141,16 @@ function updateScore() {
   for(var i=0; i<players.length; i++){
     scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + players[i].distance + '</div></div>';
   }
-  // console.log('updateScore');
+  var time = Number(new Date()) - startTime
+  var minutes = String(Math.floor(time/60000));
+  var seconds = String(Math.floor(time/1000) % 60);
+  var miliseconds = String(Math.floor(time/100) % 10);
+  if(seconds.length === 1) {
+    seconds = '0' + seconds;
+  }
+  if(started) {
+    scoreString += '<div class="time">Time: ' + Math.floor(time/60000) + ':' + seconds + ':' + (Math.floor(time/100) % 10) + '</div>';  
+  }
   scoreBoard.innerHTML = scoreString;
 }
 
@@ -171,17 +182,13 @@ function resize() {
 
 // if alternate foot, return true
 function checkFoot(data){
-  console.log(playersById["player" + data.id].left);
-  console.log(data.b0);
-
+  console.log(data);
   if(playersById["player" + data.id].left && data.b0 === 1){
-    // console.log("left foot");
     playersById["player" + data.id].left = false;
     playersById["player" + data.id].distance += 10;
   }if(!playersById["player" + data.id].left && data.b1 === 1){
     playersById["player" + data.id].left = true;
     playersById["player" + data.id].distance += 10;
-    // console.log("right foot");
   }
 }
 
@@ -195,12 +202,10 @@ function cleanControllerInput(data){
 
 socket.on('buttonUpdate', (data) => {
   data = cleanControllerInput(data);
-  console.log(data);
     if (players.indexOf(data.id != -1)) {
         players.forEach(function(player) {
           if(player.id === data.id){
             checkFoot(data);
-            // console.log("Player" + player.id + " distance = " + player.distance);
           }
         }, this);
     }
