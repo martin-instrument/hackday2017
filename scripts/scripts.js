@@ -146,7 +146,7 @@ function updateScore() {
     seconds = '0' + seconds;
   }
   if(started) {
-    scoreString += '<div class="time">Time: ' + Math.floor(time/60000) + ':' + seconds + ':' + (Math.floor(time/100) % 10) + '</div>';  
+    scoreString += '<div class="time">Time: ' + Math.floor(time/60000) + ':' + seconds + ':' + (Math.floor(time/100) % 10) + '</div>';
   }
   scoreBoard.innerHTML = scoreString;
   players.forEach((player) => {
@@ -188,10 +188,12 @@ function resize() {
 function checkFoot(data){
   if(playersById["player" + data.id].left && data.b0 === 1){
     playersById["player" + data.id].left = false;
-    playersById["player" + data.id].distance += 10;
+    // playersById["player" + data.id].distance += 10;
+    console.log("TRYING TO TWEEN");
+    TweenmMax.to(playersById["player" + data.id], 1, {distance: 100});
   }if(!playersById["player" + data.id].left && data.b1 === 1){
     playersById["player" + data.id].left = true;
-    playersById["player" + data.id].distance += 10;
+    // playersById["player" + data.id].distance += 10;
   }
 }
 
