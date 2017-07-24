@@ -24,8 +24,8 @@ var assets = [
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
-var player1 = {id: players[0], x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0};
-var player2 = {id: players[1], x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0};
+var player1 = {id: 1, x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0, left: false};
+var player2 = {id: 2, x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0, left: false};
 
 var players = [player1, player2];
 
@@ -121,15 +121,22 @@ function resize() {
   STATE.ratio = d.h / 640;
 }
 
+function checkFoot(data){
+  console.log(data)
+}
+
 socket.on('buttonUpdate', (data) => {
     if (players.indexOf(data.id != -1)) {
-        console.log(data);
+        players.forEach(function(player) {
+          if(player.id === data.id){
+            checkFoot(data.id);
+            player.distance += 1;
+            console.log("Player" + player.id + " distance = " + player.distance);
+          }
+        }, this);
     }
 });
 
 window.onload = init;
-<<<<<<< HEAD
 window.onresize = resize;
-=======
 window.resize = resize;
->>>>>>> added sockets
