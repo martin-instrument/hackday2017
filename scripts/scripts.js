@@ -1,6 +1,7 @@
 // socket connect info
 var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
+var raceDistance = 10000;
 
 var gameCanvas;
 var gCtx;
@@ -30,8 +31,8 @@ var assets = [
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
-var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 100, yOffset: 300, distance: 0, left: false};
-var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 50, yOffset: 360, distance: 0, left: false};
+var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 100, yOffset: 300, distance: 0, lastDistance: 0, left: false};
+var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 50, yOffset: 360, distance: 0, lastDistance: 0, left: false};
 
 
 var players = [player1, player2];
@@ -62,12 +63,7 @@ function drawPlayer(pl) {
       p.frame = 0;
       break;
     case STATE.running:
-      if (frame % 4 === 0) {
-        player.frame++;
-        if (player.frame >= p.frames) {
-          player.frame = 0;
-        }
-      }
+      player.frame = (player.distance/10) % 8;
       gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
@@ -83,7 +79,7 @@ function render() {
   drawField();
   drawPlayer(players[0]);
   drawPlayer(players[1]);
-  if (!paused) {
+  if (!paused && started) {
     window.requestAnimationFrame(render);
   }
 }
@@ -107,6 +103,9 @@ function countDown() {
     startOverlay.style.display = "none";
     started = true;
     startTime = Number(new Date());
+    player1.state = STATE.running;
+    player2.state = STATE.running;
+    window.requestAnimationFrame(render);
   } else {
     startText.innerHTML = countdown;
     setTimeout(countDown, 1000);
@@ -125,8 +124,6 @@ function init() {
 
   resize();
   gCtx = gameCanvas.getContext("2d");
-  console.log('filters - ');
-  console.log(gCtx);
   loadAssets();
 }
 
@@ -152,6 +149,13 @@ function updateScore() {
     scoreString += '<div class="time">Time: ' + Math.floor(time/60000) + ':' + seconds + ':' + (Math.floor(time/100) % 10) + '</div>';  
   }
   scoreBoard.innerHTML = scoreString;
+  players.forEach((player) => {
+    if(player.distance >= raceDistance) {
+      started = false;
+      startText.innerHTML = player.id + ' won';
+      startOverlay.style.display = "block";
+    }
+  });
 }
 
 function assetLoaded() {
@@ -182,7 +186,6 @@ function resize() {
 
 // if alternate foot, return true
 function checkFoot(data){
-  console.log(data);
   if(playersById["player" + data.id].left && data.b0 === 1){
     playersById["player" + data.id].left = false;
     playersById["player" + data.id].distance += 10;
@@ -202,13 +205,15 @@ function cleanControllerInput(data){
 
 socket.on('buttonUpdate', (data) => {
   data = cleanControllerInput(data);
+  if(started && !paused) {
     if (players.indexOf(data.id != -1)) {
-        players.forEach(function(player) {
-          if(player.id === data.id){
-            checkFoot(data);
-          }
-        }, this);
-    }
+      players.forEach(function(player) {
+        if(player.id === data.id){
+          checkFoot(data);
+        }
+      }, this);
+    }  
+  }
 });
 
 window.onload = init;
