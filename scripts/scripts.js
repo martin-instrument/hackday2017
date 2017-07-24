@@ -1,3 +1,7 @@
+// socket connect info
+var socket = io.connect('http://10.0.0.145:3000/');
+var controllerID = 1;
+
 var gameCanvas;
 var gCtx;
 var d;
@@ -20,9 +24,10 @@ var assets = [
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
+var player1 = {id: players[0], x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0};
+var player2 = {id: players[1], x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0};
 
-var player1 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0};
-var player2 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0};
+var players = [player1, player2];
 
 function drawField() {
   t = assetsById.trackStart;
@@ -46,12 +51,12 @@ function drawPlayer(pl) {
       break;
     case STATE.running:
       if (frame % 4 === 0) {
-        player.frame++;  
+        player.frame++;
         if (player.frame >= p.frames) {
           player.frame = 0;
         }
       }
-      
+
       gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
@@ -69,14 +74,14 @@ function render() {
   drawPlayer(player1);
   drawPlayer(player2);
   if (!paused) {
-    window.requestAnimationFrame(render);  
+    window.requestAnimationFrame(render);
   }
 }
 
 function pause() {
   paused = !paused;
   if (!paused) {
-    window.requestAnimationFrame(render);  
+    window.requestAnimationFrame(render);
   }
 }
 
@@ -116,5 +121,15 @@ function resize() {
   STATE.ratio = d.h / 640;
 }
 
+socket.on('buttonUpdate', (data) => {
+    if (players.indexOf(data.id != -1)) {
+        console.log(data);
+    }
+});
+
 window.onload = init;
+<<<<<<< HEAD
 window.onresize = resize;
+=======
+window.resize = resize;
+>>>>>>> added sockets
