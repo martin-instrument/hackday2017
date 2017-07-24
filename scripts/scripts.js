@@ -1,7 +1,7 @@
 // socket connect info
 var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
-var raceDistance = 2000;
+var raceDistance = 15000;
 
 var gameCanvas;
 var gCtx;
@@ -192,11 +192,11 @@ function checkFoot(data){
   if(playersById["player" + data.id].left && data.b0 === 1){
     playersById["player" + data.id].left = false;
     TweenMax.killTweensOf(playersById["player" + data.id]);
-    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 10});
+    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
   }if(!playersById["player" + data.id].left && data.b1 === 1){
     playersById["player" + data.id].left = true;
     TweenMax.killTweensOf(playersById["player" + data.id]);
-    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 10});
+    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
   }
 }
 
