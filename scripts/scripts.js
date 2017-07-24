@@ -142,7 +142,15 @@ function updateScore() {
     scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + players[i].distance + '</div></div>';
   }
   var time = Number(new Date()) - startTime
-  scoreString += '<div class="time">Time: ' + time + '</div>';
+  var minutes = String(Math.floor(time/60000));
+  var seconds = String(Math.floor(time/1000) % 60);
+  var miliseconds = String(Math.floor(time/100) % 10);
+  if(seconds.length === 1) {
+    seconds = '0' + seconds;
+  }
+  if(started) {
+    scoreString += '<div class="time">Time: ' + Math.floor(time/60000) + ':' + seconds + ':' + (Math.floor(time/100) % 10) + '</div>';  
+  }
   scoreBoard.innerHTML = scoreString;
 }
 
@@ -174,6 +182,7 @@ function resize() {
 
 // if alternate foot, return true
 function checkFoot(data){
+  console.log(data);
   if(playersById["player" + data.id].left && data.b0 === 1){
     playersById["player" + data.id].left = false;
     playersById["player" + data.id].distance += 10;
