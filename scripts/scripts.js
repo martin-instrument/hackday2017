@@ -46,7 +46,7 @@ function drawPlayer(pl) {
   }
   switch (player.state) {
     case STATE.standing:
-      gCtx.drawImage(p.image, 0, 0, p.d.fw, p.d.h, player.xOffset, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
+      gCtx.drawImage(p.image, 0, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       p.frame = 0;
       break;
     case STATE.running:
@@ -56,18 +56,16 @@ function drawPlayer(pl) {
           player.frame = 0;
         }
       }
-
-      gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
+      gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
   gCtx.restore();
-  // gCtx.drawImage(assetsById['player'].image, 0, 0);
 }
 
 function render() {
-  // gCtx.clearRect(0, 0, d.w, d.h);
   frame++;
-  STATE.distance += 10;
+  // player2.distance += 5;
+  STATE.distance = Math.max(player1.distance, player2.distance);
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
   drawField();
@@ -139,4 +137,3 @@ socket.on('buttonUpdate', (data) => {
 
 window.onload = init;
 window.onresize = resize;
-window.resize = resize;
