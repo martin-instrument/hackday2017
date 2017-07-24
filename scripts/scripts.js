@@ -19,14 +19,18 @@ var STATE = {
 };
 var frame = 0;
 var assetsLoaded = 0;
+var startOverlay;
+var countdown = 4;
+var startText;
+var started = false;
 var assets = [
   {id: "player", url: "images/player.png", image: {}, d: {w: 920, h: 137, fw: 115}, frames: 8},
   {id: "track", url: "images/track.png", image: {}, d: {w: 960, h: 640}, frames: 1},
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
-var player1 = {id: 1, x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0, left: false};
-var player2 = {id: 2, x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0, left: false};
+var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 100, yOffset: 300, distance: 0, left: false};
+var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 50, yOffset: 360, distance: 0, left: false};
 
 var players = [player1, player2];
 
@@ -84,11 +88,33 @@ function pause() {
   }
 }
 
+function startRace() {
+  countdown = 4;
+  startOverlay.style.display = "block";
+  setTimeout(countDown, 1000);
+}
+
+function countDown() {
+  countdown--;
+  if (countdown === 0) {
+    startOverlay.style.display = "none";
+    started = true;
+  } else {
+    startText.innerHTML = countdown;
+    setTimeout(countDown, 1000);
+  }
+}
+
 function init() {
   pauseButton = document.getElementById("pauseBtn");
+  startButton = document.getElementById("startBtn");
   pauseButton.onclick = pause;
+  startButton.onclick = startRace;
   gameCanvas = document.getElementById("gameCanvas");
   scoreBoard = document.getElementById('scoreBoard');
+  startOverlay = document.getElementById('startOverlay');
+  startText = document.getElementById('startText');
+
   resize();
   gCtx = gameCanvas.getContext("2d");
   console.log('filters - ');
