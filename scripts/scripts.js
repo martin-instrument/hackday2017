@@ -21,8 +21,8 @@ var assets = [
 ];
 var assetsById = {};
 
-var player1 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300};
-var player2 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360};
+var player1 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300, distance: 0};
+var player2 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360, distance: 0};
 
 function drawField() {
   t = assetsById.trackStart;
@@ -62,7 +62,7 @@ function drawPlayer(pl) {
 function render() {
   // gCtx.clearRect(0, 0, d.w, d.h);
   frame++;
-  STATE.distance += 10;
+  // STATE.distance += 10;
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
   drawField();
@@ -97,7 +97,6 @@ function assetLoaded() {
     for(var i=0; i<assets.length; i++){
       assetsById[assets[i].id] = assets[i];
     }
-
     window.requestAnimationFrame(render);
   }
 }
@@ -118,4 +117,4 @@ function resize() {
 }
 
 window.onload = init;
-window.resize = resize;
+window.onresize = resize;
