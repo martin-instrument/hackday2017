@@ -190,7 +190,7 @@ function checkFoot(data){
     playersById["player" + data.id].left = false;
     // playersById["player" + data.id].distance += 10;
     console.log("TRYING TO TWEEN");
-    TweenmMax.to(playersById["player" + data.id], 1, {distance: 100});
+    TweenmMax.to(playersById["player" + data.id], 1, {distance: distance  + 10});
   }if(!playersById["player" + data.id].left && data.b1 === 1){
     playersById["player" + data.id].left = true;
     // playersById["player" + data.id].distance += 10;
@@ -214,7 +214,7 @@ socket.on('buttonUpdate', (data) => {
           checkFoot(data);
         }
       }, this);
-    }  
+    }
   }
 });
 
