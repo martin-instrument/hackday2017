@@ -32,7 +32,13 @@ var assetsById = {};
 var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 100, yOffset: 300, distance: 0, left: false};
 var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 50, yOffset: 360, distance: 0, left: false};
 
+
 var players = [player1, player2];
+var playersById = {player1, player2};
+
+for(var i = 0; i < players.length; i++){
+  playersById["player" + players[i].id] = players[i];
+}
 
 function drawField() {
   t = assetsById.trackStart;
@@ -74,8 +80,8 @@ function render() {
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
   drawField();
-  drawPlayer(player1);
-  drawPlayer(player2);
+  drawPlayer(players[0]);
+  drawPlayer(players[1]);
   if (!paused) {
     window.requestAnimationFrame(render);
   }
@@ -125,7 +131,7 @@ function init() {
 function resetScore() {
   for(var i=0; i<players.length; i++) {
     players[i].distance = 0;
-  }  
+  }
 }
 
 function updateScore() {
@@ -165,26 +171,18 @@ function resize() {
 
 // if alternate foot, return true
 function checkFoot(data){
-  if(players[data.id].left && data.b0 === 1){
-    player[data.id].left = false;
-    player[data.id].distance += 1;
-    console.log("left foot");
-  }else if(!players[data.id].left && data.b1 === 1){
-    player[data.id].left = true;
-    player[data.id].distance += 1;
-    console.log("right foot");
+  console.log(playersById["player" + data.id].left);
+  console.log(data.b0);
+
+  if(playersById["player" + data.id].left && data.b0 === 1){
+    // console.log("left foot");
+    playersById["player" + data.id].left = false;
+    playersById["player" + data.id].distance += 10;
+  }if(!playersById["player" + data.id].left && data.b1 === 1){
+    playersById["player" + data.id].left = true;
+    playersById["player" + data.id].distance += 10;
+    // console.log("right foot");
   }
-
-
-  // if(players[data.id].left === true){
-  //   if(data.b0 === 1){
-  //     Console.log("TWO LEFTS");
-  //   }
-  // }else if(players[data.id].left === false){
-  //   if(data.b1 === 1) {
-  //     console.log("TWO RIGHTS");
-  //   }
-  // }
 }
 
 function cleanControllerInput(data){
@@ -197,7 +195,7 @@ function cleanControllerInput(data){
 
 socket.on('buttonUpdate', (data) => {
   data = cleanControllerInput(data);
-  // console.log(data);
+  console.log(data);
     if (players.indexOf(data.id != -1)) {
         players.forEach(function(player) {
           if(player.id === data.id){
