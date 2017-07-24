@@ -163,17 +163,49 @@ function resize() {
   STATE.ratio = d.h / 640;
 }
 
+// if alternate foot, return true
 function checkFoot(data){
-  console.log(data)
+  if(players[data.id].left && data.b0 === 1){
+    player[data.id].left = false;
+    player[data.id].distance += 1;
+    console.log("left foot");
+  }else if(!players[data.id].left && data.b1 === 1){
+    player[data.id].left = true;
+    player[data.id].distance += 1;
+    console.log("right foot");
+  }
+
+
+  // if(players[data.id].left === true){
+  //   if(data.b0 === 1){
+  //     Console.log("TWO LEFTS");
+  //   }
+  // }else if(players[data.id].left === false){
+  //   if(data.b1 === 1) {
+  //     console.log("TWO RIGHTS");
+  //   }
+  // }
+}
+
+function cleanControllerInput(data){
+  if(data.id === 1){
+    return {id:1, b0: data.b1 , b1: data.b0 , b2: data.b2 , b3: data.b3};
+  }else{
+    return data;
+  }
 }
 
 socket.on('buttonUpdate', (data) => {
+  data = cleanControllerInput(data);
+  // console.log(data);
     if (players.indexOf(data.id != -1)) {
         players.forEach(function(player) {
           if(player.id === data.id){
-            checkFoot(data.id);
-            player.distance += 1;
-            console.log("Player" + player.id + " distance = " + player.distance);
+            if(checkFoot(data)){
+              player.distance += 1;
+              players[player.id].left = false;
+            }
+            // console.log("Player" + player.id + " distance = " + player.distance);
           }
         }, this);
     }
