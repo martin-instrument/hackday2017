@@ -62,7 +62,7 @@ function drawPlayer(pl) {
 function render() {
   // gCtx.clearRect(0, 0, d.w, d.h);
   frame++;
-  // STATE.distance += 10;
+  STATE.distance += 10;
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
   drawField();
