@@ -21,7 +21,8 @@ var assets = [
 ];
 var assetsById = {};
 
-var player = {x: 0, y: 0, state: STATE.running, frame: 0};
+var player1 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 100, yOffset: 300};
+var player2 = {x: 0, y: 0, state: STATE.running, frame: 0, xOffset: 50, yOffset: 360};
 
 function drawField() {
   t = assetsById.trackStart;
@@ -31,11 +32,16 @@ function drawField() {
   gCtx.drawImage(t.image, 0, 0, t.d.w, t.d.h, 0 - d + t.d.w * 2 * STATE.ratio, 0, t.d.w * STATE.ratio, t.d.h * STATE.ratio);
 }
 
-function drawPlayer() {
+function drawPlayer(pl) {
   var p = assetsById['player'];
+  var player = pl;
+  gCtx.save();
+  if (pl === player2) {
+    gCtx.filter = 'hue-rotate(180deg)';
+  }
   switch (player.state) {
     case STATE.standing:
-      gCtx.drawImage(p.image, 0, 0, p.d.fw, p.d.h, 0, STATE.player1top * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
+      gCtx.drawImage(p.image, 0, 0, p.d.fw, p.d.h, player.xOffset, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       p.frame = 0;
       break;
     case STATE.running:
@@ -46,9 +52,10 @@ function drawPlayer() {
         }
       }
       
-      gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, 0, STATE.player1top * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
+      gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
+  gCtx.restore();
   // gCtx.drawImage(assetsById['player'].image, 0, 0);
 }
 
@@ -59,7 +66,8 @@ function render() {
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
   drawField();
-  drawPlayer();
+  drawPlayer(player1);
+  drawPlayer(player2);
   if (!paused) {
     window.requestAnimationFrame(render);  
   }
@@ -78,6 +86,8 @@ function init() {
   gameCanvas = document.getElementById("gameCanvas");
   resize();
   gCtx = gameCanvas.getContext("2d");
+  console.log('filters - ');
+  console.log(gCtx);
   loadAssets();
 }
 
