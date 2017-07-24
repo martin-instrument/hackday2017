@@ -1,5 +1,5 @@
 // socket connect info
-var socket = io.connect('http://10.0.0.145:3000/');
+var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
 
 var gameCanvas;
@@ -139,7 +139,7 @@ function updateScore() {
   for(var i=0; i<players.length; i++){
     scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + players[i].distance + '</div></div>';
   }
-  console.log('updateScore');
+  // console.log('updateScore');
   scoreBoard.innerHTML = scoreString;
 }
 
@@ -199,10 +199,7 @@ socket.on('buttonUpdate', (data) => {
     if (players.indexOf(data.id != -1)) {
         players.forEach(function(player) {
           if(player.id === data.id){
-            if(checkFoot(data)){
-              player.distance += 1;
-              players[player.id].left = false;
-            }
+            checkFoot(data);
             // console.log("Player" + player.id + " distance = " + player.distance);
           }
         }, this);
