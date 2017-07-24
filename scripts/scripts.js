@@ -6,6 +6,7 @@ var gameCanvas;
 var gCtx;
 var d;
 var paused = false;
+var scoreBoard;
 var STATE = {
   standing: 'standing',
   running: 'running',
@@ -64,7 +65,7 @@ function drawPlayer(pl) {
 
 function render() {
   frame++;
-  // player2.distance += 5;
+  updateScore();
   STATE.distance = Math.max(player1.distance, player2.distance);
   gCtx.fillStyle = '#000000';
   gCtx.fillRect(0, 0, d.w, d.h);
@@ -87,11 +88,27 @@ function init() {
   pauseButton = document.getElementById("pauseBtn");
   pauseButton.onclick = pause;
   gameCanvas = document.getElementById("gameCanvas");
+  scoreBoard = document.getElementById('scoreBoard');
   resize();
   gCtx = gameCanvas.getContext("2d");
   console.log('filters - ');
   console.log(gCtx);
   loadAssets();
+}
+
+function resetScore() {
+  for(var i=0; i<players.length; i++) {
+    players[i].distance = 0;
+  }  
+}
+
+function updateScore() {
+  var scoreString = '';
+  for(var i=0; i<players.length; i++){
+    scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + players[i].distance + '</div></div>';
+  }
+  console.log('updateScore');
+  scoreBoard.innerHTML = scoreString;
 }
 
 function assetLoaded() {
@@ -100,6 +117,7 @@ function assetLoaded() {
     for(var i=0; i<assets.length; i++){
       assetsById[assets[i].id] = assets[i];
     }
+    resetScore();
     window.requestAnimationFrame(render);
   }
 }
