@@ -1,7 +1,7 @@
 // socket connect info
 var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
-var raceDistance = 10000;
+var raceDistance = 2000;
 
 var gameCanvas;
 var gCtx;
@@ -31,8 +31,8 @@ var assets = [
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
-var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 100, yOffset: 300, distance: 0, lastDistance: 0, left: false};
-var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 50, yOffset: 360, distance: 0, lastDistance: 0, left: false};
+var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 400, yOffset: 300, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
+var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 450, yOffset: 360, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
 
 
 var players = [player1, player2];
@@ -63,7 +63,8 @@ function drawPlayer(pl) {
       p.frame = 0;
       break;
     case STATE.running:
-      player.frame = (player.distance/10) % 8;
+
+      player.frame = Math.floor(player.distance/10) % 8;
       gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
@@ -136,7 +137,7 @@ function resetScore() {
 function updateScore() {
   var scoreString = '';
   for(var i=0; i<players.length; i++){
-    scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + players[i].distance + '</div></div>';
+    scoreString += '<div class="playerBlock"><div class="label label_' + players[i].id + '">Player ' + players[i].id + ': </div><div class="playerScore">' + Math.floor(players[i].distance) + '</div></div>';
   }
   var time = Number(new Date()) - startTime
   var minutes = String(Math.floor(time/60000));
@@ -182,18 +183,20 @@ function resize() {
   gameCanvas.width = d.w;
   gameCanvas.height = d.h;
   STATE.ratio = d.h / 640;
+  player1.xOffset = 450 * STATE.ratio;
+  player2.xOffset = 400 * STATE.ratio;
 }
 
 // if alternate foot, return true
 function checkFoot(data){
   if(playersById["player" + data.id].left && data.b0 === 1){
     playersById["player" + data.id].left = false;
-    // playersById["player" + data.id].distance += 10;
-    console.log("TRYING TO TWEEN");
-    TweenmMax.to(playersById["player" + data.id], 1, {distance: distance  + 10});
+    TweenMax.killTweensOf(playersById["player" + data.id]);
+    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 10});
   }if(!playersById["player" + data.id].left && data.b1 === 1){
     playersById["player" + data.id].left = true;
-    // playersById["player" + data.id].distance += 10;
+    TweenMax.killTweensOf(playersById["player" + data.id]);
+    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 10});
   }
 }
 
