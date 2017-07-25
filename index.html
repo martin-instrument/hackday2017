@@ -11,12 +11,13 @@
 <body>
   <canvas id="gameCanvas" width="100%" height="100%"></canvas>
   <div id="controls">
-    <button id="startBtn">Start Race</button>
     <button id="pauseBtn">pause</button>
   </div>
   <div id="startOverlay">
     <div id="startText">Ready</div>
   </div>
+  <button class="menuButton" id="startBtn">Start Race</button>
+  <button class="menuButton reset" id="resetBtn">Reset</button>
   <div id="scoreBoard" class="scoreBoard"></div>
 <script>
   var socket = io('http://localhost');

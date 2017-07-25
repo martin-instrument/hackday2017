@@ -53,6 +53,45 @@ body {
   height: 100%;
 }
 
+.menuButton {
+  box-shadow: 2px 2px 5px #000000;
+  text-shadow: 2px 2px 5px #000000;
+  font-size: 4vh;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 2vh;
+  background: #ff0000;
+  border: 10px solid #ffff00;
+  color: #ffff00;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+#pauseBtn {
+  box-shadow: 2px 2px 5px #000000;
+  text-shadow: 2px 2px 5px #000000;
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  font-size: 2vh;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 2vh;
+  border: 10px solid #ffff00;
+  color: #ffff00;
+  cursor: pointer;
+  background: #ff0000;
+}
+
+.reset {
+  display: none;
+  transform: translate(-50%, 100%);
+}
+
 #startText {
   display: block;
   position: absolute;

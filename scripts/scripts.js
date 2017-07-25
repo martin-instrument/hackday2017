@@ -1,5 +1,5 @@
 // socket connect info
-var socket = io.connect('http://192.168.1.59:3000/');
+// var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
 var raceDistance = 15000;
 
@@ -64,7 +64,7 @@ function drawPlayer(pl) {
       break;
     case STATE.running:
 
-      player.frame = Math.floor(player.distance/10) % 8;
+      player.frame = Math.floor(player.distance/30) % 8;
       gCtx.drawImage(p.image, p.d.fw * player.frame, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
       break;
   }
@@ -94,6 +94,7 @@ function pause() {
 
 function startRace() {
   countdown = 4;
+  startButton.style.display = 'none';
   startOverlay.style.display = "block";
   setTimeout(countDown, 1000);
 }
@@ -112,17 +113,55 @@ function countDown() {
     setTimeout(countDown, 1000);
   }
 }
+function controlsInput(e) {
+  switch(e.keyCode) {
+    case 65:
+      checkFoot(1, 0)
+      break;
+    case 68:
+      checkFoot(1, 1)
+      break;
+    case 37:
+      checkFoot(2, 0)
+      break;
+    case 39:
+      checkFoot(2, 1)
+      break;
+    case 13:
+
+      break;
+  }
+}
+
+function initControls() {
+  document.addEventListener('keydown', controlsInput, false);
+}
+
+function reset() {
+  players.forEach((player) => {
+    player.distance = 0;
+    player.tweenDist = 0;
+    player.state = STATE.standing;
+  });
+  startText.innerHTML = 'Ready';
+  resetButton.style.display = 'none';
+  startButton.style.display = 'block';
+  startOverlay.style.display = "none";
+  render();
+}
 
 function init() {
   pauseButton = document.getElementById("pauseBtn");
   startButton = document.getElementById("startBtn");
+  resetButton = document.getElementById("resetBtn");
   pauseButton.onclick = pause;
   startButton.onclick = startRace;
+  resetButton.onclick = reset;
   gameCanvas = document.getElementById("gameCanvas");
   scoreBoard = document.getElementById('scoreBoard');
   startOverlay = document.getElementById('startOverlay');
   startText = document.getElementById('startText');
-
+  initControls();
   resize();
   gCtx = gameCanvas.getContext("2d");
   loadAssets();
@@ -155,6 +194,7 @@ function updateScore() {
       started = false;
       startText.innerHTML = player.id + ' won';
       startOverlay.style.display = "block";
+      resetButton.style.display = 'block';
     }
   });
 }
@@ -190,39 +230,53 @@ function resize() {
   }
 }
 
+function checkFoot(id, key){
+  if (playersById["player" + id].left && key === 1) {
+    playersById["player" + id].left = false;
+    TweenMax.killTweensOf(playersById["player" + id]);
+    TweenMax.to(playersById["player" + id], 0.05, {distance: playersById["player" + id].distance  + 30});
+  }
+  if (!playersById["player" + id].left && key === 0) {
+    playersById["player" + id].left = true;
+    TweenMax.killTweensOf(playersById["player" + id]);
+    TweenMax.to(playersById["player" + id], 0.05, {distance: playersById["player" + id].distance  + 30});
+  }
+}
+
+
 // if alternate foot, return true
-function checkFoot(data){
-  if(playersById["player" + data.id].left && data.b0 === 1){
-    playersById["player" + data.id].left = false;
-    TweenMax.killTweensOf(playersById["player" + data.id]);
-    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
-  }if(!playersById["player" + data.id].left && data.b1 === 1){
-    playersById["player" + data.id].left = true;
-    TweenMax.killTweensOf(playersById["player" + data.id]);
-    TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
-  }
-}
+// function checkFoot(data){
+//   if(playersById["player" + data.id].left && data.b0 === 1){
+//     playersById["player" + data.id].left = false;
+//     TweenMax.killTweensOf(playersById["player" + data.id]);
+//     TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
+//   }if(!playersById["player" + data.id].left && data.b1 === 1){
+//     playersById["player" + data.id].left = true;
+//     TweenMax.killTweensOf(playersById["player" + data.id]);
+//     TweenMax.to(playersById["player" + data.id], 0.05, {distance: playersById["player" + data.id].distance  + 30});
+//   }
+// }
 
-function cleanControllerInput(data){
-  if(data.id === 1){
-    return {id:1, b0: data.b1 , b1: data.b0 , b2: data.b2 , b3: data.b3};
-  }else{
-    return data;
-  }
-}
+// function cleanControllerInput(data){
+//   if(data.id === 1){
+//     return {id:1, b0: data.b1 , b1: data.b0 , b2: data.b2 , b3: data.b3};
+//   }else{
+//     return data;
+//   }
+// }
 
-socket.on('buttonUpdate', (data) => {
-  data = cleanControllerInput(data);
-  if(started && !paused) {
-    if (players.indexOf(data.id != -1)) {
-      players.forEach(function(player) {
-        if(player.id === data.id){
-          checkFoot(data);
-        }
-      }, this);
-    }
-  }
-});
+// socket.on('buttonUpdate', (data) => {
+//   data = cleanControllerInput(data);
+//   if(started && !paused) {
+//     if (players.indexOf(data.id != -1)) {
+//       players.forEach(function(player) {
+//         if(player.id === data.id){
+//           checkFoot(data);
+//         }
+//       }, this);
+//     }
+//   }
+// });
 
 window.onload = init;
 window.onresize = resize;
