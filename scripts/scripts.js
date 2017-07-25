@@ -185,6 +185,9 @@ function resize() {
   STATE.ratio = d.h / 640;
   player1.xOffset = 450 * STATE.ratio;
   player2.xOffset = 400 * STATE.ratio;
+  if (gCtx) {
+    render();
+  }
 }
 
 // if alternate foot, return true
