@@ -1,7 +1,7 @@
 // socket connect info
 // var socket = io.connect('http://192.168.1.59:3000/');
 var controllerID = 1;
-var raceDistance = 15000;
+var raceDistance = 5000;
 
 var gameCanvas;
 var gCtx;
@@ -26,13 +26,15 @@ var startText;
 var started = false;
 var startTime;
 var assets = [
-  {id: "player", url: "images/player.png", image: {}, d: {w: 920, h: 137, fw: 115}, frames: 8},
+  // {id: "player", url: "images/player.png", image: {}, d: {w: 920, h: 137, fw: 115}, frames: 8},
+  {id: "player", url: "images/adain.png", image: {}, d: {w: 1600, h: 200, fw: 155}, frames: 8},
+  {id: "player2", url: "images/guma.png", image: {}, d: {w: 1600, h: 200, fw: 155}, frames: 8},
   {id: "track", url: "images/track.png", image: {}, d: {w: 960, h: 640}, frames: 1},
   {id: "trackStart", url: "images/track-start.png", image: {}, d: {w: 960, h: 640}, frames: 1}
 ];
 var assetsById = {};
-var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 400, yOffset: 300, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
-var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 450, yOffset: 360, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
+var player1 = {id: 1, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 400, yOffset: 240, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
+var player2 = {id: 2, x: 0, y: 0, state: STATE.standing, frame: 0, xOffset: 450, yOffset: 300, tweenDist: 0, distance: 0, lastDistance: 0, left: false};
 
 
 var players = [player1, player2];
@@ -51,12 +53,12 @@ function drawField() {
 }
 
 function drawPlayer(pl) {
-  var p = assetsById['player'];
+  var p = pl.id === 1 ? assetsById['player'] : assetsById['player2'];
   var player = pl;
   gCtx.save();
-  if (pl === player2) {
-    gCtx.filter = 'hue-rotate(180deg)';
-  }
+  // if (pl === player2) {
+  //   gCtx.filter = 'hue-rotate(180deg)';
+  // }
   switch (player.state) {
     case STATE.standing:
       gCtx.drawImage(p.image, 0, 0, p.d.fw, p.d.h, player.xOffset - STATE.distance + player.distance, player.yOffset * STATE.ratio, p.d.fw * STATE.ratio, p.d.h * STATE.ratio);
